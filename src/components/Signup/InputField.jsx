@@ -10,6 +10,7 @@ export default function InputField({ name, placeholder, register, errors }) {
         </label>
       </div>
       <input
+        type={name == "password" ? "password" : "text"}
         name={name}
         placeholder={placeholder}
         className={`${
