@@ -45,7 +45,7 @@ export default function StepOne() {
       setLoading(true);
       const res = await axios.post(`${api_base_url}/step1`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": `multipart/form-data boundary=${formData._boundary}` ,
         },
       });
       if (res.status == 201 || res.status == 200) {
