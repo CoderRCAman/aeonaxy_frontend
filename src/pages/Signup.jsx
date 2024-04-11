@@ -7,6 +7,7 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { api_base_url } from "../COSTANTS";
+import { useNavigate } from "react-router-dom";
 const schema = yup.object().shape({
   name: yup.string().required(),
   username: yup.string().required(),
@@ -24,7 +25,7 @@ export default function Signup() {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
+  const navigate = useNavigate();
   async function onSubmit(data) {
     console.log(data);
     try {
@@ -35,8 +36,9 @@ export default function Signup() {
         toast.success(response.data?.message);
         localStorage.setItem("id", response.data.data.id);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        window.location.href = "/step1";
+        navigate("/step1", {
+          replace: true,
+        });
       }
     } catch (error) {
       setError(error?.response?.data?.message || error.message);

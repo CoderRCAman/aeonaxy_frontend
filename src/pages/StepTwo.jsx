@@ -67,7 +67,7 @@ export default function StepTwo() {
         toast.success("Updated successfully");
         localStorage.setItem("step2", true);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        window.location.href = "/";
+       navigate('/')
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);

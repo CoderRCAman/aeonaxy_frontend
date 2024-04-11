@@ -3,7 +3,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { api_base_url } from "../COSTANTS";
 export default function StepOne() {
   const [user, setUser] = useState(null);
@@ -11,6 +11,7 @@ export default function StepOne() {
   const [file, setFile] = useState(null);
   const [location, setLocation] = useState("");
   const fileRef = useRef(null);
+  const navigate = useNavigate();
   const isDisabled = () => {
     if ((file || user?.image_url) && location) {
       return false;
@@ -51,7 +52,7 @@ export default function StepOne() {
         toast.success("Uploaded successfully!");
         localStorage.setItem("step1", true);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        window.location.href = "/step2";
+        navigate("/step2");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
