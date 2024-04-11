@@ -5,19 +5,21 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api_base_url } from "../COSTANTS";
+import { useStoreContext } from "../store/StoreProvider";
 export default function StepOne() {
-  const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
   const [location, setLocation] = useState("");
   const fileRef = useRef(null);
   const navigate = useNavigate();
   const isDisabled = () => {
-    if ((file || user?.image_url) && location) {
+    if ((file || userInfo?.image_url) && location) {
       return false;
     }
     return true;
   };
+  const { setUser } = useStoreContext();
   const locationPath = useLocation();
   useEffect(() => {
     async function fetchUser() {
@@ -26,7 +28,7 @@ export default function StepOne() {
         const user = await axios.get(
           `${api_base_url}/user/` + id + `?timestamp=${new Date().getTime()}`
         );
-        setUser(user.data.data);
+        setUserInfo(user.data.data);
         setLocation(user.data.data.location);
       } catch (error) {
         console.log(error);
@@ -39,19 +41,20 @@ export default function StepOne() {
     const id = localStorage.getItem("id");
     const formData = new FormData();
     if (file) formData.append("file", file);
-    formData.append("location", location || user?.location);
+    formData.append("location", location || userInfo?.location);
     formData.append("id", id);
     try {
       setLoading(true);
       const res = await axios.post(`${api_base_url}/step1`, formData, {
         headers: {
-          "Content-Type": `multipart/form-data boundary=${formData._boundary}` ,
+          "Content-Type": `multipart/form-data boundary=${formData._boundary}`,
         },
       });
       if (res.status == 201 || res.status == 200) {
         toast.success("Uploaded successfully!");
         localStorage.setItem("step1", true);
         await new Promise((resolve) => setTimeout(resolve, 1000));
+        setUser((user) => ({ ...user, step_1: true }));
         navigate("/step2");
       }
     } catch (error) {
@@ -108,10 +111,10 @@ export default function StepOne() {
                     className="w-full h-full object-cover rounded-full cursor-pointer"
                     src={URL.createObjectURL(file)}
                   />
-                ) : user?.image_url ? (
+                ) : userInfo?.image_url ? (
                   <img
                     className="w-full h-full object-cover rounded-full cursor-pointer"
-                    src={user?.image_url}
+                    src={userInfo?.image_url}
                   />
                 ) : (
                   <MdCameraEnhance className="text-4xl text-neutral-400" />

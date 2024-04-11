@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { api_base_url } from "../COSTANTS";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useStoreContext } from "../store/StoreProvider";
 export default function StepTwo() {
   const [selectedChoices, setSelectedchoices] = useState({
     desinger: false,
@@ -33,6 +34,7 @@ export default function StepTwo() {
     }
     return true;
   }
+  const { setUser } = useStoreContext();
   const locationPath = useLocation();
   useEffect(() => {
     async function fetchUser() {
@@ -67,7 +69,8 @@ export default function StepTwo() {
         toast.success("Updated successfully");
         localStorage.setItem("step2", true);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-       navigate('/')
+        setUser((user) => ({ ...user, step_2: true }));
+        navigate("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);

@@ -17,7 +17,6 @@ const Home = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState(null);
   const locationPath = useLocation();
-  console.log(locationPath);
   useEffect(() => {
     async function fetchUser() {
       const id = localStorage.getItem("id");

@@ -8,6 +8,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { api_base_url } from "../COSTANTS";
 import { useNavigate } from "react-router-dom";
+import { useStoreContext } from "../store/StoreProvider";
 const schema = yup.object().shape({
   name: yup.string().required(),
   username: yup.string().required(),
@@ -24,10 +25,12 @@ export default function Signup() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    shouldFocusError: false,
   });
   const navigate = useNavigate();
+  const { setUser } = useStoreContext();
+  console.log(errors);
   async function onSubmit(data) {
-    console.log(data);
     try {
       setLoading(true);
       const response = await axios.post(`${api_base_url}/signup`, data);
@@ -36,6 +39,7 @@ export default function Signup() {
         toast.success(response.data?.message);
         localStorage.setItem("id", response.data.data.id);
         await new Promise((resolve) => setTimeout(resolve, 1000));
+        setUser((user) => ({ ...user, id: response.data.data.id }));
         navigate("/step1", {
           replace: true,
         });
@@ -119,9 +123,8 @@ export default function Signup() {
                 <input
                   type="checkbox"
                   name="agree"
-                  id=""
                   className={`scale-150 mb-7`}
-                  {...register("agree")}
+                  {...register("agree", {})}
                 />
 
                 <div className="mx-w-sm leading-5 text-md text-gray-600 font-medium">
